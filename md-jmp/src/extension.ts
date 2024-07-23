@@ -65,12 +65,15 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(disposable);
 }
 
+// @ref:\[@key:\[([0-9]{12})\],(\[[a-z]*\])*\]
+// @ref:\[@key:\[([0-9]{12})\](,(\[[a-z]*\])*)*\]
+
 vscode.languages.registerHoverProvider('markdown', {
 	provideHover(doc, position, token) {
-		console.log('hover: ', position);
 		const lineText = doc.lineAt(position.line).text
 
-		const re = /^@key:\[([0-9]{12})\]$/g;
+		const re = /@ref:\[@key:\[([0-9]{12})\](,(\[[a-z]*\])*)*\]/g;
+
 		const match = re.exec(lineText);
 		if (match !== undefined && match !== null) {
 			console.log('match', match)
