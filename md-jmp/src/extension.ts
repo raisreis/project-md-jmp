@@ -4,6 +4,7 @@ import * as vscode from 'vscode';
 
 const fs = require('fs');
 const readline = require('readline');
+const path = require('path');
 
 const idx = new Map();
 // This method is called when your extension is activated
@@ -21,7 +22,7 @@ export function activate(context: vscode.ExtensionContext) {
 	const disposable = vscode.commands.registerCommand('md-jmp.helloWorld', () => {
 		const re = /^@key:\[([0-9]{12})\]$/g;
 
-		// fine all markdown files in project
+		// find all markdown files in project
 		vscode.workspace.findFiles("**/*.md*", ).then((x) => {
 			x.forEach(f => {
 
@@ -29,11 +30,14 @@ export function activate(context: vscode.ExtensionContext) {
 					input: fs.createReadStream(f.path), crlfDelay: Infinity
 				});
 				rl.on('line', (line: any) => {
-					// const match = line.match(re)
 					const xs = line.matchAll(re);
 					const match = re.exec(line);
 					if (match !== null && match !== undefined) {
-						idx.set(match[1], f.path);
+						idx.set(match[1], {
+							absolutePath: f.path,
+							filename: path.basename(f.path)
+						});
+
 						console.log("match: ", match);
 						console.log("idx: ", idx);
 					}
@@ -60,6 +64,31 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(disposable);
 }
+
+vscode.languages.registerHoverProvider('markdown', {
+	provideHover(doc, position, token) {
+		console.log('hover: ', position);
+		const lineText = doc.lineAt(position.line).text
+
+		const re = /^@key:\[([0-9]{12})\]$/g;
+		const match = re.exec(lineText);
+		if (match !== undefined && match !== null) {
+			console.log('match', match)
+
+			const entry = idx.get(match[1]);
+			console.log(entry)
+
+			const contents = new vscode.MarkdownString(
+				`[${entry.filename}](file://${entry.absolutePath})`
+			);
+
+
+			return new vscode.Hover(contents);
+		}
+		
+		return null;
+	}
+});
 
 
 // This method is called when your extension is deactivated
