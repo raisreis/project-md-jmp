@@ -38,8 +38,6 @@ export function activate(context: vscode.ExtensionContext) {
 							filename: path.basename(f.path)
 						});
 
-						console.log("match: ", match);
-						console.log("idx: ", idx);
 					}
 				})
 			})
@@ -65,8 +63,6 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(disposable);
 }
 
-// @ref:\[@key:\[([0-9]{12})\],(\[[a-z]*\])*\]
-// @ref:\[@key:\[([0-9]{12})\](,(\[[a-z]*\])*)*\]
 
 vscode.languages.registerHoverProvider('markdown', {
 	provideHover(doc, position, token) {
@@ -76,10 +72,8 @@ vscode.languages.registerHoverProvider('markdown', {
 
 		const match = re.exec(lineText);
 		if (match !== undefined && match !== null) {
-			console.log('match', match)
 
 			const entry = idx.get(match[1]);
-			console.log(entry)
 
 			const contents = new vscode.MarkdownString(
 				`[${entry.filename}](file://${entry.absolutePath})`
