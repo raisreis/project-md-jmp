@@ -2,8 +2,10 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 
+const fs = require('fs');
+const readline = require('readline');
 
-
+const idx = new Map();
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
@@ -17,11 +19,26 @@ export function activate(context: vscode.ExtensionContext) {
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json
 	const disposable = vscode.commands.registerCommand('md-jmp.helloWorld', () => {
+		const re = /^@key:\[([0-9]{12})\]$/g;
 
 		// fine all markdown files in project
-		const allFiles = vscode.workspace.findFiles("**/*.md*", ).then((x) => {
-			console.log("done");
-			console.log(x)
+		vscode.workspace.findFiles("**/*.md*", ).then((x) => {
+			x.forEach(f => {
+
+				const rl = readline.createInterface({
+					input: fs.createReadStream(f.path), crlfDelay: Infinity
+				});
+				rl.on('line', (line: any) => {
+					// const match = line.match(re)
+					const xs = line.matchAll(re);
+					const match = re.exec(line);
+					if (match !== null && match !== undefined) {
+						idx.set(match[1], f.path);
+						console.log("match: ", match);
+						console.log("idx: ", idx);
+					}
+				})
+			})
 		});
 
 
