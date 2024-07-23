@@ -19,7 +19,7 @@ export function activate(context: vscode.ExtensionContext) {
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json
-	const disposable = vscode.commands.registerCommand('md-jmp.helloWorld', () => {
+	const disposable = vscode.commands.registerCommand('md-jmp.run', () => {
 		const re = /^@key:\[([0-9]{12})\]$/g;
 
 		// find all markdown files in project
@@ -57,7 +57,7 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 
 
-		vscode.window.showInformationMessage('Hello World from md-jmp!');
+		vscode.window.showInformationMessage('Extension md-jmp enabled');
 	});
 
 	context.subscriptions.push(disposable);

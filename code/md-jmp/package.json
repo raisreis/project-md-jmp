@@ -14,8 +14,8 @@
   "contributes": {
     "commands": [
       {
-        "command": "md-jmp.helloWorld",
-        "title": "Hello World"
+        "command": "md-jmp.run",
+        "title": "md-jump"
       }
     ]
   },
