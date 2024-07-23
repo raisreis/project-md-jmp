@@ -16,11 +16,23 @@ export function activate(context: vscode.ExtensionContext) {
 	const disposable = vscode.commands.registerCommand('md-jmp.helloWorld', () => {
 		// The code you place here will be executed every time your command is executed
 		// Display a message box to the user
+		const workspaceFolders = vscode.workspace.workspaceFolders;
+		if (workspaceFolders) {
+			const rootPath = workspaceFolders[0].uri;
+	  	const op = vscode.Uri.parse(rootPath + "/stuff.md");
+	  	vscode.workspace.openTextDocument(op).then(doc => {
+				console.log("opening ...");
+	  		vscode.window.showTextDocument(doc);
+	  	})
+		}
+
+
 		vscode.window.showInformationMessage('Hello World from md-jmp!');
 	});
 
 	context.subscriptions.push(disposable);
 }
+
 
 // This method is called when your extension is deactivated
 export function deactivate() {}
